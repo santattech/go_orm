@@ -84,16 +84,18 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var resp Response
 	var post = models.GetPost()
-	id, _ := strconv.Atoi(params["id"])
 	_ = json.NewDecoder(r.Body).Decode(&post)
+	id, _ := strconv.Atoi(params["id"])
 
-	err := dbconn.Model(&post).Where("id = ?", id).Update(&post).Error
+	err := dbconn.Model(&post).Where("id = ?", id).Updates(&post).Error
 
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
 
+	dbconn.Find(&post, "id = ?", id)
+	resp.Data = append(resp.Data, post)
 	resp.Message = "200"
 	json.NewEncoder(w).Encode(resp)
 }
