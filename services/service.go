@@ -44,7 +44,7 @@ func GetPost(w http.ResponseWriter, r *http.Request) {
 	var post = models.GetPost()
 	log.Println(id)
 
-	err := dbconn.Where("id = ?", id).Find(&post).Error
+	err := dbconn.Find(&post, "id = ?", id).Error
 
 	if err == nil {
 		log.Println(post)
